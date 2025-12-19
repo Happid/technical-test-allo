@@ -20,7 +20,7 @@ Resources consumed:
 - `/2024-01-01..2024-01-05?from=IDR&to=USD`
 - `/currencies`
 
-## 1.C. Try the API
+## 1.C. Try the API After run the app
 - `http://localhost:8080/api/finance/data/latest_idr_rates`
 - `http://localhost:8080/api/finance/data/historical_idr_usd`
 - `http://localhost:8080/api/finance/data/supported_currencies`
