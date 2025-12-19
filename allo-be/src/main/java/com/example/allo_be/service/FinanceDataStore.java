@@ -4,36 +4,30 @@ import com.example.allo_be.dto.FinanceResponseDto;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Component
 public class FinanceDataStore {
 
-    private Map<String, List<FinanceResponseDto>> internalData =
-            new HashMap<>();
+    private Map<String, List<FinanceResponseDto>> data = Map.of();
 
-    private Map<String, List<FinanceResponseDto>> immutableData =
-            Collections.emptyMap();
-
-    public synchronized void initialize(Map<String, List<FinanceResponseDto>> data) {
-        Map<String, List<FinanceResponseDto>> defensiveCopy = new HashMap<>();
-
-        data.forEach((key, value) ->
-                defensiveCopy.put(key, List.copyOf(value))
+    public synchronized void initialize(Map<String, List<FinanceResponseDto>> initialData) {
+        // deep unmodifiable
+        this.data = Collections.unmodifiableMap(
+                initialData.entrySet().stream()
+                        .collect(java.util.stream.Collectors.toMap(
+                                Map.Entry::getKey,
+                                e -> List.copyOf(e.getValue())
+                        ))
         );
-
-        this.immutableData = Collections.unmodifiableMap(defensiveCopy);
-        this.internalData = null;
     }
 
     public List<FinanceResponseDto> getByResourceType(String resourceType) {
-        List<FinanceResponseDto> result = immutableData.get(resourceType);
-        return result != null ? result : Collections.emptyList();
+        return data.get(resourceType);
     }
 
-    public boolean isInitialized() {
-        return !immutableData.isEmpty();
+    public boolean contains(String resourceType) {
+        return data.containsKey(resourceType);
     }
 }
