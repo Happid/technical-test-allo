@@ -27,13 +27,14 @@ public class HistoricalIdrUsdStrategy implements IDRDataFetcher{
     public List<FinanceResponseDto> fetch() {
         HistoricalRatesResponse response = apiClient.fetchHistoricalIdrUsd();
 
-        List<FinanceResponseDto> result = new ArrayList<>();
-
-        for (Map.Entry<String, Map<String, Double>> entry : response.getRates().entrySet()) {
-            result.add(new FinanceResponseDto(entry.getKey(), entry.getValue()));
-        }
-
-        return result;
+        return response.getRates().entrySet().stream()
+                .sorted(Map.Entry.comparingByKey()) // SORT DATE
+                .map(entry -> {
+                    String date = entry.getKey();
+                    Double usdRate = entry.getValue().get("USD");
+                    return new FinanceResponseDto(date, usdRate);
+                })
+                .toList();
     }
 
 }

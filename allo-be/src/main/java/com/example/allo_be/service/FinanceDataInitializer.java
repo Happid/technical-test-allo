@@ -23,15 +23,24 @@ public class FinanceDataInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        Map<String, List<FinanceResponseDto>> aggregatedData = new HashMap<>();
+        try {
+            Map<String, List<FinanceResponseDto>> aggregatedData = new HashMap<>();
 
-        for (IDRDataFetcher fetcher : fetchers) {
-            String resourceType = fetcher.resourceType();
-            List<FinanceResponseDto> data = fetcher.fetch();
-            aggregatedData.put(resourceType, data);
+            for (IDRDataFetcher fetcher : fetchers) {
+                aggregatedData.put(
+                        fetcher.resourceType(),
+                        fetcher.fetch()
+                );
+            }
+
+            dataStore.initialize(aggregatedData);
+
+        } catch (Exception ex) {
+            throw new IllegalStateException(
+                    "Failed to initialize finance data from Frankfurter API",
+                    ex
+            );
         }
-
-        dataStore.initialize(aggregatedData);
     }
 
 
