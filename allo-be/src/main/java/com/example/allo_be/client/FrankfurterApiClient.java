@@ -1,10 +1,12 @@
 package com.example.allo_be.client;
 
-import com.example.allo_be.dto.CurrenciesResponse;
 import com.example.allo_be.dto.HistoricalRatesResponse;
 import com.example.allo_be.dto.LatestRatesResponse;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import java.util.Map;
 
 @Component
 public class FrankfurterApiClient {
@@ -30,11 +32,11 @@ public class FrankfurterApiClient {
                 .block();
     }
 
-    public CurrenciesResponse fetchSupportedCurrencies() {
+    public Map<String, String> fetchSupportedCurrencies() {
         return webClient.get()
                 .uri("/currencies")
                 .retrieve()
-                .bodyToMono(CurrenciesResponse.class)
+                .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {})
                 .block();
     }
 }

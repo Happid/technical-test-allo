@@ -1,7 +1,6 @@
 package com.example.allo_be.strategy;
 
 import com.example.allo_be.client.FrankfurterApiClient;
-import com.example.allo_be.dto.CurrenciesResponse;
 import com.example.allo_be.dto.FinanceResponseDto;
 import org.springframework.stereotype.Component;
 
@@ -24,11 +23,11 @@ public class SupportedCurrenciesStrategy implements IDRDataFetcher{
 
     @Override
     public List<FinanceResponseDto> fetch() {
-        CurrenciesResponse response = apiClient.fetchSupportedCurrencies();
+        Map<String, String> currencies = apiClient.fetchSupportedCurrencies();
 
         List<FinanceResponseDto> result = new ArrayList<>();
 
-        for (Map.Entry<String, String> entry : response.getCurrencies().entrySet()) {
+        for (Map.Entry<String, String> entry : currencies.entrySet()) {
             result.add(new FinanceResponseDto(entry.getKey(), entry.getValue()));
         }
 
